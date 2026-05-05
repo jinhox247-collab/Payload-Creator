@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jinhox007 Payload Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon: #00ffe7;
+    --neon2: #ff00c8;
+    --dark: #030b14;
+    --dark2: #071525;
+    --dark3: #0a1e33;
+    --card: #0d2137;
+    --border: #1a3a5c;
+    --text: #b8d8f0;
+    --accent: #ff6b35;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,231,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,231,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(40px); }
+  }
+
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Welcome screen */
+  #welcome-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeOutWelcome 0.8s ease 3.5s forwards;
+  }
+
+  @keyframes fadeOutWelcome {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  .welcome-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    color: var(--neon);
+    text-shadow: 0 0 20px var(--neon), 0 0 60px var(--neon), 0 0 100px var(--neon);
+    animation: glitch 1s infinite alternate;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  @keyframes glitch {
+    0% { text-shadow: 0 0 20px var(--neon), 0 0 60px var(--neon); transform: translateX(0); }
+    20% { text-shadow: -3px 0 var(--neon2), 3px 0 var(--neon); transform: translateX(-2px); }
+    40% { text-shadow: 3px 0 var(--neon2), -3px 0 var(--neon); transform: translateX(2px); }
+    60% { text-shadow: 0 0 20px var(--neon), 0 0 60px var(--neon); transform: translateX(0); }
+    100% { text-shadow: 0 0 20px var(--neon), 0 0 60px var(--neon), 0 0 100px var(--neon); }
+  }
+
+  .welcome-sub {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--neon2);
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    letter-spacing: 4px;
+    animation: blink 0.8s step-end infinite;
+    text-align: center;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .welcome-ring {
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--neon);
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 0 30px var(--neon), inset 0 0 30px rgba(0,255,231,0.1);
+    animation: ringPulse 2s ease-in-out infinite;
+  }
+
+  .welcome-ring:nth-child(2) {
+    width: 280px;
+    height: 280px;
+    border-color: var(--neon2);
+    box-shadow: 0 0 20px var(--neon2);
+    animation-delay: 0.3s;
+    animation-direction: reverse;
+  }
+
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  .welcome-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  /* Main App */
+  #app {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    animation: fadeIn 0.5s ease 4s both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 2rem 0 1.5rem;
+    position: relative;
+  }
+
+  .header-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 4vw, 2.5rem);
+    background: linear-gradient(90deg, var(--neon), var(--neon2), var(--neon));
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    letter-spacing: 2px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% }
+    100% { background-position: 200% }
+  }
+
+  .header-sub {
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(0,255,231,0.5);
+    font-size: 0.75rem;
+    letter-spacing: 6px;
+    margin-top: 0.4rem;
+    text-transform: uppercase;
+  }
+
+  .header-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon), var(--neon2), transparent);
+    margin: 1rem 0;
+  }
+
+  /* Hero image */
+  .hero-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 30px rgba(0,255,231,0.15);
+  }
+
+  .hero-image canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hero-icon {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 0 20px var(--neon));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    color: var(--neon);
+    text-shadow: 0 0 15px var(--neon);
+    letter-spacing: 4px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--dark2);
+    padding: 0.4rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, rgba(0,255,231,0.15), rgba(255,0,200,0.1));
+    color: var(--neon);
+    box-shadow: 0 0 15px rgba(0,255,231,0.2);
+    border: 1px solid rgba(0,255,231,0.3);
+  }
+
+  .tab:hover:not(.active) {
+    background: rgba(0,255,231,0.05);
+    color: var(--neon);
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: panelIn 0.3s ease; }
+
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon), var(--neon2));
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--neon);
+    letter-spacing: 3px;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Form elements */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(0,255,231,0.6);
+    letter-spacing: 2px;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--neon);
+    box-shadow: 0 0 15px rgba(0,255,231,0.15);
+  }
+
+  select option {
+    background: var(--dark2);
+    color: var(--text);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(0,255,231,0.2), rgba(255,0,200,0.2));
+    color: var(--neon);
+    border: 1px solid var(--neon);
+    width: 100%;
+    padding: 1rem;
+    box-shadow: 0 0 20px rgba(0,255,231,0.2);
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,255,231,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-primary:hover::before { left: 100%; }
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(0,255,231,0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-copy {
+    background: rgba(255,107,53,0.15);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-size: 0.7rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .btn-copy:hover {
+    background: rgba(255,107,53,0.3);
+    box-shadow: 0 0 15px rgba(255,107,53,0.3);
+  }
+
+  .btn-auto {
+    background: rgba(255,0,200,0.1);
+    color: var(--neon2);
+    border: 1px solid var(--neon2);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.65rem;
+  }
+
+  .btn-auto:hover {
+    background: rgba(255,0,200,0.2);
+    box-shadow: 0 0 15px rgba(255,0,200,0.3);
+  }
+
+  /* Auto creator chips */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .type-chip {
+    padding: 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--dark2);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .type-chip:hover, .type-chip.selected {
+    border-color: var(--neon);
+    color: var(--neon);
+    background: rgba(0,255,231,0.08);
+    box-shadow: 0 0 10px rgba(0,255,231,0.15);
+  }
+
+  .type-chip .chip-icon { font-size: 1.2rem; display: block; margin-bottom: 0.2rem; }
+
+  /* Output */
+  .output-box {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: #4eff91;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .output-box.has-content {
+    border-color: rgba(0,255,231,0.4);
+    box-shadow: 0 0 20px rgba(0,255,231,0.08);
+  }
+
+  /* Success badge */
+  .success-badge {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(78,255,145,0.1);
+    border: 1px solid rgba(78,255,145,0.4);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.8rem;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: #4eff91;
+    letter-spacing: 2px;
+    animation: successPulse 2s ease infinite;
+  }
+
+  .success-badge.show { display: flex; }
+
+  @keyframes successPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(78,255,145,0.2); }
+    50% { box-shadow: 0 0 25px rgba(78,255,145,0.4); }
+  }
+
+  /* Output header */
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+
+  .output-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(0,255,231,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Method badges */
+  .method-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-right: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .method-badge.GET { background: rgba(0,255,100,0.15); color: #00ff64; border-color: rgba(0,255,100,0.3); }
+  .method-badge.POST { background: rgba(0,150,255,0.15); color: #0096ff; border-color: rgba(0,150,255,0.3); }
+  .method-badge.HEAD { background: rgba(255,200,0,0.15); color: #ffc800; border-color: rgba(255,200,0,0.3); }
+  .method-badge.CONNECT { background: rgba(255,0,200,0.15); color: var(--neon2); border-color: rgba(255,0,200,0.3); }
+  .method-badge.PUT { background: rgba(255,107,53,0.15); color: var(--accent); border-color: rgba(255,107,53,0.3); }
+  .method-badge.DELETE { background: rgba(255,50,50,0.15); color: #ff3232; border-color: rgba(255,50,50,0.3); }
+  .method-badge.PATCH { background: rgba(150,0,255,0.15); color: #9600ff; border-color: rgba(150,0,255,0.3); }
+  .method-badge.OPTIONS { background: rgba(0,255,231,0.15); color: var(--neon); border-color: rgba(0,255,231,0.3); }
+
+  .method-badge:hover, .method-badge.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .footer-owner {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--neon);
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0,255,231,0.4);
+  }
+
+  .footer-wa {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: #25D366;
+    margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  /* Notification */
+  .notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(78,255,145,0.15);
+    border: 1px solid #4eff91;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: #4eff91;
+    z-index: 9999;
+    transform: translateX(200%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 0 20px rgba(78,255,145,0.3);
+  }
+
+  .notification.show { transform: translateX(0); }
+
+  /* Loading animation */
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+
+  @keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+  }
+
+  @media (max-width: 600px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .type-grid { grid-template-columns: repeat(2, 1fr); }
+    .tab { font-size: 0.6rem; padding: 0.6rem 0.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Welcome Screen -->
+<div id="welcome-screen">
+  <div class="welcome-ring"></div>
+  <div class="welcome-ring"></div>
+  <div class="welcome-content">
+    <div class="welcome-logo">JINHOX007</div>
+    <div style="font-family:'Orbitron',monospace; font-size:1rem; color:var(--neon2); margin-top:0.5rem; letter-spacing:3px;">PAYLOAD CREATOR</div>
+    <div class="welcome-sub">▶ BEM VINDO AO APP DO JINHOX007 ◀</div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification">✓ Copiado com sucesso!</div>
+
+<!-- Main App -->
+<div id="app">
+  <div class="header">
+    <div class="header-logo">⚡ JINHOX007 PAYLOAD CREATOR</div>
+    <div class="header-sub">// Advanced Network Payload Generator</div>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- Hero Image (Canvas) -->
+  <div class="hero-image">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-overlay">
+      <div class="hero-icon">🛰️</div>
+      <div class="hero-label">PAYLOAD GENERATOR v2.0</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('auto', this)">⚡ AUTO CREATOR</button>
+    <button class="tab" onclick="switchTab('manual', this)">⚙️ MANUAL</button>
+  </div>
+
+  <!-- AUTO CREATOR PANEL -->
+  <div class="panel active" id="panel-auto">
+    <div class="card">
+      <div class="card-title">⚡ TIPO DE PAYLOAD</div>
+      <div class="type-grid">
+        <div class="type-chip selected" onclick="selectAutoType(this, 'HTTP Proxy')" data-type="HTTP Proxy">
+          <span class="chip-icon">🌐</span>HTTP Proxy
+        </div>
+        <div class="type-chip" onclick="selectAutoType(this, 'HTTPS Tunnel')" data-type="HTTPS Tunnel">
+          <span class="chip-icon">🔒</span>HTTPS Tunnel
+        </div>
+        <div class="type-chip" onclick="selectAutoType(this, 'WebSocket')" data-type="WebSocket">
+          <span class="chip-icon">🔌</span>WebSocket
+        </div>
+        <div class="type-chip" onclick="selectAutoType(this, 'SSH Tunnel')" data-type="SSH Tunnel">
+          <span class="chip-icon">🖥️</span>SSH Tunnel
+        </div>
+        <div class="type-chip" onclick="selectAutoType(this, 'CONNECT')" data-type="CONNECT">
+          <span class="chip-icon">⚡</span>CONNECT
+        </div>
+        <div class="type-chip" onclick="selectAutoType(this, 'Custom')" data-type="Custom">
+          <span class="chip-icon">🛠️</span>Custom
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🌍 HOST / SERVIDOR</label>
+        <input type="text" id="auto-host" placeholder="ex: sn.speedtest.net" value="sn.speedtest.net">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>🔢 PORTA</label>
+          <input type="number" id="auto-port" placeholder="ex: 80" value="80">
+        </div>
+        <div class="form-group">
+          <label>📡 PROTOCOLO</label>
+          <select id="auto-proto">
+            <option>HTTP/1.1</option>
+            <option>HTTP/1.0</option>
+            <option>HTTP/2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🔑 USER AGENT</label>
+        <input type="text" id="auto-ua" placeholder="User-Agent personalizado" value="Mozilla/5.0 (Linux; Android 13)">
+      </div>
+
+      <button class="btn btn-primary" onclick="generateAuto()">
+        ⚡ GERAR PAYLOAD AUTOMÁTICO
+      </button>
+    </div>
+  </div>
+
+  <!-- MANUAL PANEL -->
+  <div class="panel" id="panel-manual">
+    <div class="card">
+      <div class="card-title">⚙️ CONFIGURAÇÃO MANUAL</div>
+
+      <div class="form-group">
+        <label>📋 MÉTODO HTTP</label>
+        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.5rem;">
+          <span class="method-badge GET active" onclick="selectMethod(this,'GET')">GET</span>
+          <span class="method-badge POST" onclick="selectMethod(this,'POST')">POST</span>
+          <span class="method-badge HEAD" onclick="selectMethod(this,'HEAD')">HEAD</span>
+          <span class="method-badge CONNECT" onclick="selectMethod(this,'CONNECT')">CONNECT</span>
+          <span class="method-badge PUT" onclick="selectMethod(this,'PUT')">PUT</span>
+          <span class="method-badge DELETE" onclick="selectMethod(this,'DELETE')">DELETE</span>
+          <span class="method-badge PATCH" onclick="selectMethod(this,'PATCH')">PATCH</span>
+          <span class="method-badge OPTIONS" onclick="selectMethod(this,'OPTIONS')">OPTIONS</span>
+        </div>
+        <select id="manual-method" style="display:none"></select>
+      </div>
+
+      <div class="form-group">
+        <label>🌍 HOST</label>
+        <input type="text" id="manual-host" placeholder="ex: sn.speedtest.net" value="sn.speedtest.net">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>🔢 PORTA</label>
+          <input type="number" id="manual-port" placeholder="80" value="80">
+        </div>
+        <div class="form-group">
+          <label>📡 PROTOCOLO</label>
+          <select id="manual-proto">
+            <option>HTTP/1.1</option>
+            <option>HTTP/1.0</option>
+            <option>HTTP/2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🗂️ PATH / ENDPOINT</label>
+        <input type="text" id="manual-path" placeholder="ex: /" value="/">
+      </div>
+
+      <div class="form-group">
+        <label>🔑 USER AGENT</label>
+        <input type="text" id="manual-ua" placeholder="User-Agent" value="Mozilla/5.0 (Linux; Android 13)">
+      </div>
+
+      <div class="form-group">
+        <label>📝 HEADERS EXTRAS (opcional)</label>
+        <textarea id="manual-headers" placeholder="X-Custom-Header: value&#10;Authorization: Bearer token"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>📦 BODY (para POST/PUT)</label>
+        <textarea id="manual-body" placeholder="dados do body (opcional)"></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateManual()">
+        ⚙️ CRIAR PAYLOAD MANUAL
+      </button>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card" id="output-section" style="display:none">
+    <div class="success-badge show" id="success-badge">
+      <span>✅</span> PAYLOAD GERADO COM SUCESSO
+    </div>
+
+    <div class="output-header">
+      <span class="output-label">// PAYLOAD OUTPUT</span>
+      <button class="btn btn-copy" onclick="copyPayload()">📋 COPIAR PAYLOAD</button>
+    </div>
+    <div class="output-box has-content" id="output-content"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-owner">👤 OWNER: JINHOX007</div>
+    <div class="footer-wa">
+      <span>💬</span> WhatsApp: +258 87 905 2496
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── Canvas Hero Animation ───────────────────────────────────────────
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resizeCanvas();
+
+  const particles = Array.from({length: 80}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.8,
+    vy: (Math.random() - 0.5) * 0.8,
+    r: Math.random() * 2 + 0.5,
+    color: Math.random() > 0.5 ? '#00ffe7' : '#ff00c8',
+    alpha: Math.random() * 0.7 + 0.3
+  }));
+
+  function drawHero() {
+    ctx.fillStyle = 'rgba(3,11,20,0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2,'0');
+      ctx.fill();
+
+      // Connect nearby particles
+      particles.slice(i+1).forEach(p2 => {
+        const dx = p.x - p2.x, dy = p.y - p2.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 80) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = p.color + Math.floor((1 - dist/80) * 80).toString(16).padStart(2,'0');
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      });
+    });
+
+    requestAnimationFrame(drawHero);
+  }
+
+  drawHero();
+
+  // ─── State ───────────────────────────────────────────────────────────
+  let selectedMethod = 'GET';
+  let selectedAutoType = 'HTTP Proxy';
+
+  // ─── Tab Switch ──────────────────────────────────────────────────────
+  function switchTab(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('output-section').style.display = 'none';
+  }
+
+  // ─── Method Select ───────────────────────────────────────────────────
+  function selectMethod(el, method) {
+    document.querySelectorAll('.method-badge').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    selectedMethod = method;
+  }
+
+  // ─── Auto Type Select ────────────────────────────────────────────────
+  function selectAutoType(el, type) {
+    document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedAutoType = type;
+
+    // Set defaults based on type
+    const port = document.getElementById('auto-port');
+    if (type === 'HTTPS Tunnel') port.value = 443;
+    else if (type === 'SSH Tunnel') port.value = 22;
+    else if (type === 'WebSocket') port.value = 8080;
+    else port.value = 80;
+  }
+
+  // ─── Auto Generator ──────────────────────────────────────────────────
+  function generateAuto() {
+    const host = document.getElementById('auto-host').value.trim() || 'sn.speedtest.net';
+    const port = document.getElementById('auto-port').value.trim() || '80';
+    const proto = document.getElementById('auto-proto').value;
+    const ua = document.getElementById('auto-ua').value.trim();
+    const type = selectedAutoType;
+
+    let payload = '';
+
+    if (type === 'HTTP Proxy' || type === 'Custom') {
+      payload = `GET http://${host}/ ${proto}\r\nHost: ${host}\r\nUser-Agent: ${ua}\r\nProxy-Connection: keep-alive\r\nConnection: keep-alive\r\n\r\n`;
+    } else if (type === 'HTTPS Tunnel' || type === 'CONNECT') {
+      payload = `CONNECT ${host}:${port} ${proto}\r\nHost: ${host}:${port}\r\nUser-Agent: ${ua}\r\nProxy-Connection: Keep-Alive\r\n\r\n`;
+    } else if (type === 'WebSocket') {
+      const key = btoa(crypto.getRandomValues(new Uint8Array(16)).join(''));
+      payload = `GET / HTTP/1.1\r\nHost: ${host}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: ${key.substring(0,24)}\r\nSec-WebSocket-Version: 13\r\nUser-Agent: ${ua}\r\n\r\n`;
+    } else if (type === 'SSH Tunnel') {
+      payload = `CONNECT ${host}:${port} ${proto}\r\nHost: ${host}\r\nUser-Agent: ${ua}\r\nX-Online-Host: ${host}\r\nX-Forward-Host: ${host}\r\nProxy-Connection: Keep-Alive\r\nConnection: Keep-Alive\r\n\r\n`;
+    }
+
+    showOutput(payload);
+  }
+
+  // ─── Manual Generator ────────────────────────────────────────────────
+  function generateManual() {
+    const method   = selectedMethod;
+    const host     = document.getElementById('manual-host').value.trim() || 'sn.speedtest.net';
+    const port     = document.getElementById('manual-port').value.trim() || '80';
+    const proto    = document.getElementById('manual-proto').value;
+    const path     = document.getElementById('manual-path').value.trim() || '/';
+    const ua       = document.getElementById('manual-ua').value.trim();
+    const headers  = document.getElementById('manual-headers').value.trim();
+    const body     = document.getElementById('manual-body').value.trim();
+
+    let target = (method === 'CONNECT') ? `${host}:${port}` : path;
+
+    let payload = `${method} ${target} ${proto}\r\nHost: ${host}\r\nUser-Agent: ${ua}\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\n`;
+
+    if (headers) {
+      headers.split('\n').forEach(h => {
+        if (h.trim()) payload += `${h.trim()}\r\n`;
+      });
+    }
+
+    if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+      payload += `Content-Length: ${body.length}\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n${body}`;
+    } else {
+      payload += `\r\n`;
+    }
+
+    showOutput(payload);
+  }
+
+  // ─── Show Output ─────────────────────────────────────────────────────
+  function showOutput(payload) {
+    const section = document.getElementById('output-section');
+    const content = document.getElementById('output-content');
+    content.textContent = payload;
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ─── Copy ────────────────────────────────────────────────────────────
+  function copyPayload() {
+    const text = document.getElementById('output-content').textContent;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('📋 Payload copiado com sucesso!');
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showNotification('📋 Payload copiado com sucesso!');
+    });
+  }
+
+  function showNotification(msg) {
+    const n = document.getElementById('notification');
+    n.textContent = msg;
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 2500);
+  }
+
+  // Resize canvas on window resize
+  window.addEventListener('resize', resizeCanvas);
+</script>
+</body>
+</html>
+
